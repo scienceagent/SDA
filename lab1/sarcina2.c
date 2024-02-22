@@ -2,11 +2,13 @@
 // #include <stdlib.h>
 #include <string.h>
 
-struct date {
+struct date
+{
     int day, month, year;
 };
 
-struct employee {
+struct employee
+{
     char name[30];
     char gender[10];
     int age;
@@ -15,8 +17,10 @@ struct employee {
 };
 
 // show all the employee
-void print_employee(struct employee emp[], int n) {
-    for (int i = 0; i < n; i++) {
+void print_employee(struct employee emp[], int n)
+{
+    for (int i = 0; i < n; i++)
+    {
         printf("\n**Employee %d:**\n", i + 1);
         printf("Name: %s\n", emp[i].name);
         printf("Gender: %s\n", emp[i].gender);
@@ -27,33 +31,41 @@ void print_employee(struct employee emp[], int n) {
 }
 
 // find a employee by name in structure
-int find_employee_by_name(struct employee emp[], int n, char* name) {
-    for (int i = 0; i < n; i++) {
-        if (strcmp(emp[i].name, name) == 0) {
+int find_employee_by_name(struct employee emp[], int n, char *name)
+{
+    for (int i = 0; i < n; i++)
+    {
+        if (strcmp(emp[i].name, name) == 0)
+        {
             return i;
         }
     }
-    return -1; 
+    return -1;
 }
 
-//sort by name
-int compare_by_name(const void *a, const void *b) {
+// sort by name
+int compare_by_name(const void *a, const void *b)
+{
     return strcmp(((struct employee *)a)->name, ((struct employee *)b)->name);
 }
 
-//sort by age
-int compare_by_age(const void *a, const void *b) {
+// sort by age
+int compare_by_age(const void *a, const void *b)
+{
     return ((struct employee *)a)->age - ((struct employee *)b)->age;
 }
 
-//sort by salary
-int compare_by_salary(const void *a, const void *b) {
+// sort by salary
+int compare_by_salary(const void *a, const void *b)
+{
     return (int)(((struct employee *)a)->salary - ((struct employee *)b)->salary);
 }
 
-//insert a new employee
-void insert_employee(struct employee emp[], int *n) {
-    if (*n < 10) {
+// insert a new employee
+void insert_employee(struct employee emp[], int *n)
+{
+    if (*n < 10)
+    {
         printf("\nEnter details for the new employee:\n");
         printf("Name: ");
         scanf("%s", emp[*n].name);
@@ -67,15 +79,20 @@ void insert_employee(struct employee emp[], int *n) {
         scanf("%d %d %d", &emp[*n].birthday.day, &emp[*n].birthday.month, &emp[*n].birthday.year);
         (*n)++;
         printf("Employee inserted at the end of the array.\n");
-    } else {
+    }
+    else
+    {
         printf("Cannot insert more than 10 employees. Array is full.\n");
     }
 }
 
-//insert a new emloyee at begining of the array
-void insert_employee_start(struct employee emp[], int *n) {
-    if (*n < 10) {
-        for (int i = *n; i > 0; i--) {
+// insert a new emloyee at begining of the array
+void insert_employee_start(struct employee emp[], int *n)
+{
+    if (*n < 10)
+    {
+        for (int i = *n; i > 0; i--)
+        {
             emp[i] = emp[i - 1];
         }
 
@@ -93,25 +110,31 @@ void insert_employee_start(struct employee emp[], int *n) {
 
         (*n)++;
         printf("Employee inserted at the beginning of the array.\n");
-    } else {
+    }
+    else
+    {
         printf("Cannot insert more than 10 employees. Array is full.\n");
     }
 }
 
-//insert a new employee 
-void insert_employee_at_position(struct employee emp[], int *n) {
+// insert a new employee
+void insert_employee_at_position(struct employee emp[], int *n)
+{
     int position;
 
     printf("\nEnter the position (1 to %d) to insert the new employee: ", *n + 1);
     scanf("%d", &position);
 
-    if (position < 1 || position > *n + 1) {
+    if (position < 1 || position > *n + 1)
+    {
         printf("Invalid position. Please enter a valid position.\n");
         return;
     }
 
-    if (*n < 10) {
-        for (int i = *n; i >= position; i--) {
+    if (*n < 10)
+    {
+        for (int i = *n; i >= position; i--)
+        {
             emp[i] = emp[i - 1];
         }
 
@@ -129,23 +152,28 @@ void insert_employee_at_position(struct employee emp[], int *n) {
 
         (*n)++;
         printf("Employee inserted at position %d.\n", position);
-    } else {
+    }
+    else
+    {
         printf("Cannot insert more than 10 employees. Array is full.\n");
     }
 }
 
-//delete a employee at a specific position
-void delete_employee_at_position(struct employee emp[], int *n) {
+// delete a employee at a specific position
+void delete_employee_at_position(struct employee emp[], int *n)
+{
     int position;
 
     printf("\nEnter the position (1 to %d) to delete the employee: ", *n);
     scanf("%d", &position);
 
-    if (position < 1 || position > *n) {
+    if (position < 1 || position > *n)
+    {
         printf("Invalid position. Please enter a valid position.\n");
         return;
     }
-    for (int i = position - 1; i < *n - 1; i++) {
+    for (int i = position - 1; i < *n - 1; i++)
+    {
         emp[i] = emp[i + 1];
     }
 
@@ -153,8 +181,8 @@ void delete_employee_at_position(struct employee emp[], int *n) {
     printf("Employee deleted from position %d.\n", position);
 }
 
-
-int main() {
+int main()
+{
     struct employee *emp;
     int i, n, choice;
     char search_name[30];
@@ -163,7 +191,8 @@ int main() {
 
     emp = (struct employee *)malloc(n * sizeof(struct employee));
 
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++)
+    {
         printf("\nEnter details for employee %d:\n", i + 1);
         printf("Name: ");
         scanf("%s", emp[i].name);
@@ -177,8 +206,9 @@ int main() {
         scanf("%d %d %d", &emp[i].birthday.day, &emp[i].birthday.month, &emp[i].birthday.year);
     }
 
-    do {
-       printf("\n\nMENU:\n");
+    do
+    {
+        printf("\n\nMENU:\n");
         printf("1. Print all employees\n");
         printf("2. Search for an employee by name\n");
         printf("3. Sort employees by name\n");
@@ -193,53 +223,54 @@ int main() {
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
-
-        switch (choice) {
-            case 1:
-                print_employee(emp, n);
-                break;
-            case 2:
-                printf("Enter the name of the employee to search: ");
-                scanf("%s", search_name);
-                int position = find_employee_by_name(emp, n, search_name);
-                if (position != -1) {
-                    printf("Employee found at position %d\n", position + 1);
-                } else {
-                    printf("Employee not found\n");
-                }
-                break;
-            case 3:
-                qsort(emp, n, sizeof(struct employee), compare_by_name);
-                printf("Employees sorted by name.\n");
-                break;
-            case 4:
-                qsort(emp, n, sizeof(struct employee), compare_by_age);
-                printf("Employees sorted by age.\n");
-                break;
-            case 5:
-                qsort(emp, n, sizeof(struct employee), compare_by_salary);
-                printf("Employees sorted by salary.\n");
-                break;
-           case 6:
-            case 7:
-                insert_employee_start(emp, &n);
-                break;
-            case 8:
-                insert_employee_at_position(emp, &n);
-                break;
-            case 9:
-                delete_employee_at_position(emp, &n);
-                break;
-            case 10:
-            case 0:
-                printf("Exiting...\n");
-                break;
-            default:
-                printf("Invalid choice. Please try again.\n");
+        switch (choice)
+        {
+        case 1:
+            print_employee(emp, n);
+            break;
+        case 2:
+            printf("Enter the name of the employee to search: ");
+            scanf("%s", search_name);
+            int position = find_employee_by_name(emp, n, search_name);
+            if (position != -1)
+            {
+                printf("Employee found at position %d\n", position + 1);
+            }
+            else
+            {
+                printf("Employee not found\n");
+            }
+            break;
+        case 3:
+            qsort(emp, n, sizeof(struct employee), compare_by_name);
+            printf("Employees sorted by name.\n");
+            break;
+        case 4:
+            qsort(emp, n, sizeof(struct employee), compare_by_age);
+            printf("Employees sorted by age.\n");
+            break;
+        case 5:
+            qsort(emp, n, sizeof(struct employee), compare_by_salary);
+            printf("Employees sorted by salary.\n");
+            break;
+        case 6:
+        case 7:
+            insert_employee_start(emp, &n);
+            break;
+        case 8:
+            insert_employee_at_position(emp, &n);
+            break;
+        case 9:
+            delete_employee_at_position(emp, &n);
+            break;
+        case 10:
+        case 0:
+            printf("Exiting...\n");
+            break;
+        default:
+            printf("Invalid choice. Please try again.\n");
         }
     } while (choice != 0);
 
     return 0;
-
-    
 }
