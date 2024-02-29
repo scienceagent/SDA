@@ -2,199 +2,234 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct date
-{
+typedef struct Date {
     int day, month, year;
-};
+} Date;
 
-struct employee
-{
+typedef struct Employee {
     char name[30];
     char gender[10];
     int age;
     float salary;
-    struct date birthday;
-};
+    Date birthday;
+} Employee;
 
-void print_employee(struct employee emp[], int n);
-int find_employee_by_name(struct employee emp[], int n, char *name);
+typedef struct EmployeeVector {
+    Employee *data;
+    size_t size;
+    size_t capacity;
+} EmployeeVector;
+
 int compare_by_name(const void *a, const void *b);
 int compare_by_age(const void *a, const void *b);
 int compare_by_salary(const void *a, const void *b);
-void insert_employee_start(struct employee emp[], int *n);
-void insert_employee_at_position(struct employee emp[], int *n);
-void delete_employee_at_position(struct employee emp[], int *n);
-void read_employee_details(struct employee emp[], int n);
-void insert_employee(struct employee emp[], int *n);
 
-void print_employee(struct employee emp[], int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        printf("\n**Employee %d:**\n", i + 1);
-        printf("Name: %s\n", emp[i].name);
-        printf("Gender: %s\n", emp[i].gender);
-        printf("Age: %d\n", emp[i].age);
-        printf("Salary: %.2f\n", emp[i].salary);
-        printf("Birthday: %d-%d-%d\n", emp[i].birthday.day, emp[i].birthday.month, emp[i].birthday.year);
+void initialize_vector(EmployeeVector *vec, size_t capacity);
+void push_back(EmployeeVector *vec, Employee newEmployee);
+void push_front(EmployeeVector *vec, Employee newEmployee);
+void pop_back(EmployeeVector *vec);
+void pop_front(EmployeeVector *vec);
+void print_employee_vector(EmployeeVector *vec);
+void free_employee_vector(EmployeeVector *vec);
+
+int find_employee_by_name(EmployeeVector *vec, char *name);
+void insert_employee_start(EmployeeVector *vec);
+void insert_employee_at_position(EmployeeVector *vec);
+void delete_employee_at_position(EmployeeVector *vec);
+void read_employee_details(EmployeeVector *vec);
+
+void generate_random_data(EmployeeVector *vec, int n);
+
+void initialize_vector(EmployeeVector *vec, size_t capacity) {
+    vec->data = (Employee *)malloc(capacity * sizeof(Employee));
+    vec->size = 0;
+    vec->capacity = capacity;
+}
+
+void push_back(EmployeeVector *vec, Employee newEmployee) {
+    if (vec->size < vec->capacity) {
+        vec->data[vec->size++] = newEmployee;
+    } else {
+        size_t new_capacity = vec->capacity * 2;
+        vec->data = (Employee *)realloc(vec->data, new_capacity * sizeof(Employee));
+        vec->capacity = new_capacity;
+        vec->data[vec->size++] = newEmployee;
     }
 }
 
-int find_employee_by_name(struct employee emp[], int n, char *name)
-{
-    for (int i = 0; i < n; i++)
-    {
-        if (strcmp(emp[i].name, name) == 0)
-        {
+void push_front(EmployeeVector *vec, Employee newEmployee) {
+    if (vec->size < vec->capacity) {
+        for (size_t i = vec->size; i > 0; i--) {
+            vec->data[i] = vec->data[i - 1];
+        }
+        vec->data[0] = newEmployee;
+        vec->size++;
+    } else {
+        size_t new_capacity = vec->capacity * 2;
+        vec->data = (Employee *)realloc(vec->data, new_capacity * sizeof(Employee));
+        vec->capacity = new_capacity;
+        for (size_t i = vec->size; i > 0; i--) {
+            vec->data[i] = vec->data[i - 1];
+        }
+        vec->data[0] = newEmployee;
+        vec->size++;
+    }
+}
+
+void pop_back(EmployeeVector *vec) {
+    if (vec->size > 0) {
+        vec->size--;
+    }
+}
+
+void pop_front(EmployeeVector *vec) {
+    if (vec->size > 0) {
+        for (size_t i = 0; i < vec->size - 1; i++) {
+            vec->data[i] = vec->data[i + 1];
+        }
+        vec->size--;
+    }
+}
+
+void print_employee_vector(EmployeeVector *vec) {
+    for (size_t i = 0; i < vec->size; i++) {
+        printf("\n**Employee %lu:**\n", i + 1);
+        printf("Name: %s\n", vec->data[i].name);
+        printf("Gender: %s\n", vec->data[i].gender);
+        printf("Age: %d\n", vec->data[i].age);
+        printf("Salary: %.2f\n", vec->data[i].salary);
+        printf("Birthday: %d-%d-%d\n", vec->data[i].birthday.day, vec->data[i].birthday.month, vec->data[i].birthday.year);
+    }
+}
+
+void free_employee_vector(EmployeeVector *vec) {
+    free(vec->data);
+    vec->size = 0;
+    vec->capacity = 0;
+}
+
+int find_employee_by_name(EmployeeVector *vec, char *name) {
+    for (size_t i = 0; i < vec->size; i++) {
+        if (strcmp(vec->data[i].name, name) == 0) {
             return i;
         }
     }
     return -1;
 }
 
-int compare_by_name(const void *a, const void *b)
-{
-    return strcmp(((struct employee *)a)->name, ((struct employee *)b)->name);
+void insert_employee_start(EmployeeVector *vec) {
+    Employee newEmployee;
+    printf("\nEnter details for the new employee:\n");
+    printf("Name: ");
+    scanf("%s", newEmployee.name);
+    printf("Gender: ");
+    scanf("%s", newEmployee.gender);
+    printf("Age: ");
+    scanf("%d", &newEmployee.age);
+    printf("Salary: ");
+    scanf("%f", &newEmployee.salary);
+    printf("Birthday (day month year): ");
+    scanf("%d %d %d", &newEmployee.birthday.day, &newEmployee.birthday.month, &newEmployee.birthday.year);
+
+    push_front(vec, newEmployee);
+    printf("Employee inserted at the beginning of the array.\n");
 }
 
-int compare_by_age(const void *a, const void *b)
-{
-    return ((struct employee *)a)->age - ((struct employee *)b)->age;
-}
-
-int compare_by_salary(const void *a, const void *b)
-{
-    return (int)(((struct employee *)a)->salary - ((struct employee *)b)->salary);
-}
-
-void insert_employee_start(struct employee emp[], int *n)
-{
-    if (*n < 10)
-    {
-        for (int i = *n; i > 0; i--)
-        {
-            emp[i] = emp[i - 1];
-        }
-
-        printf("\nEnter details for the new employee:\n");
-        printf("Name: ");
-        scanf("%s", emp[0].name);
-        printf("Gender: ");
-        scanf("%s", emp[0].gender);
-        printf("Age: ");
-        scanf("%d", &emp[0].age);
-        printf("Salary: ");
-        scanf("%f", &emp[0].salary);
-        printf("Birthday (day month year): ");
-        scanf("%d %d %d", &emp[0].birthday.day, &emp[0].birthday.month, &emp[0].birthday.year);
-
-        (*n)++;
-        printf("Employee inserted at the beginning of the array.\n");
-    }
-    else
-    {
-        printf("Cannot insert more than 10 employees. Array is full.\n");
-    }
-}
-
-void insert_employee_at_position(struct employee emp[], int *n)
-{
+void insert_employee_at_position(EmployeeVector *vec) {
     int position;
 
-    printf("\nEnter the position (1 to %d) to insert the new employee: ", *n + 1);
+    printf("\nEnter the position (1 to %lu) to insert the new employee: ", vec->size + 1);
     scanf("%d", &position);
 
-    if (position < 1 || position > *n + 1)
-    {
+    if (position < 1 || position > vec->size + 1) {
         printf("Invalid position. Please enter a valid position.\n");
         return;
     }
 
-    if (*n < 10)
-    {
-        for (int i = *n; i >= position; i--)
-        {
-            emp[i] = emp[i - 1];
-        }
+    Employee newEmployee;
+    printf("\nEnter details for the new employee:\n");
+    printf("Name: ");
+    scanf("%s", newEmployee.name);
+    printf("Gender: ");
+    scanf("%s", newEmployee.gender);
+    printf("Age: ");
+    scanf("%d", &newEmployee.age);
+    printf("Salary: ");
+    scanf("%f", &newEmployee.salary);
+    printf("Birthday (day month year): ");
+    scanf("%d %d %d", &newEmployee.birthday.day, &newEmployee.birthday.month, &newEmployee.birthday.year);
 
-        printf("\nEnter details for the new employee:\n");
-        printf("Name: ");
-        scanf("%s", emp[position - 1].name);
-        printf("Gender: ");
-        scanf("%s", emp[position - 1].gender);
-        printf("Age: ");
-        scanf("%d", &emp[position - 1].age);
-        printf("Salary: ");
-        scanf("%f", &emp[position - 1].salary);
-        printf("Birthday (day month year): ");
-        scanf("%d %d %d", &emp[position - 1].birthday.day, &emp[position - 1].birthday.month, &emp[position - 1].birthday.year);
-
-        (*n)++;
-        printf("Employee inserted at position %d.\n", position);
-    }
-    else
-    {
-        printf("Cannot insert more than 10 employees. Array is full.\n");
-    }
+    push_back(vec, newEmployee);
+    printf("Employee inserted at position %d.\n", position);
 }
 
-void delete_employee_at_position(struct employee emp[], int *n)
-{
+void delete_employee_at_position(EmployeeVector *vec) {
     int position;
 
-    printf("\nEnter the position (1 to %d) to delete the employee: ", *n);
+    printf("\nEnter the position (1 to %lu) to delete the employee: ", vec->size);
     scanf("%d", &position);
 
-    if (position < 1 || position > *n)
-    {
+    if (position < 1 || position > vec->size) {
         printf("Invalid position. Please enter a valid position.\n");
         return;
     }
-    for (int i = position - 1; i < *n - 1; i++)
-    {
-        emp[i] = emp[i + 1];
+
+    for (size_t i = position - 1; i < vec->size - 1; i++) {
+        vec->data[i] = vec->data[i + 1];
     }
 
-    (*n)--;
+    pop_back(vec);
     printf("Employee deleted from position %d.\n", position);
 }
 
-void read_employee_details(struct employee emp[], int n)
-{
-    int employee_number;
+void read_employee_details(EmployeeVector *vec) {
+    size_t employee_number;
 
-    printf("\nEnter the employee number (1 to %d) to read details: ", n);
-    scanf("%d", &employee_number);
+    printf("\nEnter the employee number (1 to %lu) to read details: ", vec->size);
+    scanf("%lu", &employee_number);
 
-    if (employee_number < 1 || employee_number > n)
-    {
+    if (employee_number < 1 || employee_number > vec->size) {
         printf("Invalid employee number. Please enter a valid number.\n");
         return;
     }
 
-    printf("\nDetails for Employee %d:\n", employee_number);
-    printf("Name: %s\n", emp[employee_number - 1].name);
-    printf("Gender: %s\n", emp[employee_number - 1].gender);
-    printf("Age: %d\n", emp[employee_number - 1].age);
-    printf("Salary: %.2f\n", emp[employee_number - 1].salary);
-    printf("Birthday: %d-%d-%d\n", emp[employee_number - 1].birthday.day, emp[employee_number - 1].birthday.month, emp[employee_number - 1].birthday.year);
+    printf("\nDetails for Employee %lu:\n", employee_number);
+    printf("Name: %s\n", vec->data[employee_number - 1].name);
+    printf("Gender: %s\n", vec->data[employee_number - 1].gender);
+    printf("Age: %d\n", vec->data[employee_number - 1].age);
+    printf("Salary: %.2f\n", vec->data[employee_number - 1].salary);
+    printf("Birthday: %d-%d-%d\n", vec->data[employee_number - 1].birthday.day,
+           vec->data[employee_number - 1].birthday.month, vec->data[employee_number - 1].birthday.year);
 }
 
-int main()
-{
-    struct employee *emp;
-    int n, choice;
+void generate_random_data(EmployeeVector *vec, int n) {
+    for (int i = 0; i < n; i++) {
+        Employee newEmployee;
+        sprintf(newEmployee.name, "Employee%d", i + 1);
+        sprintf(newEmployee.gender, (rand() % 2 == 0) ? "Male" : "Female");
+        newEmployee.age = rand() % 41 + 20;
+        newEmployee.salary = (float)(rand() % 50001 + 30000);
+        newEmployee.birthday.day = rand() % 31 + 1;
+        newEmployee.birthday.month = rand() % 12 + 1;
+        newEmployee.birthday.year = rand() % 21 + 1980;
+
+        push_back(vec, newEmployee);
+    }
+}
+
+int main() {
+    EmployeeVector empVector;
+    int choice;
     char search_name[30];
-    printf("Enter the number of employees: ");
-    scanf("%d", &n);
 
-    emp = (struct employee *)malloc(n * sizeof(struct employee));
+    printf("Enter the initial capacity of the employee vector: ");
+    scanf("%lu", &empVector.capacity);
 
-    // Generate random data for employees
-    insert_employee(emp, &n);
+    initialize_vector(&empVector, empVector.capacity);
 
-    do
-    {
+    generate_random_data(&empVector, empVector.capacity);
+
+    do {
         printf("\n\nMENU:\n");
         printf("1. Print all employees\n");
         printf("2. Search for an employee by name\n");
@@ -208,76 +243,64 @@ int main()
         printf("0. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
+        // Implementation of compare functions
+        int compare_by_name(const void *a, const void *b) {
+            return strcmp(((struct Employee *)a)->name, ((struct Employee *)b)->name);
+        }
 
-        switch (choice)
-        {
-        case 1:
-            print_employee(emp, n);
-            break;
-        case 2:
-            printf("Enter the name of the employee to search: ");
-            scanf("%s", search_name);
-            int position = find_employee_by_name(emp, n, search_name);
-            if (position != -1)
-            {
-                printf("Employee found at position %d\n", position + 1);
-            }
-            else
-            {
-                printf("Employee not found\n");
-            }
-            break;
-        case 3:
-            qsort(emp, n, sizeof(struct employee), compare_by_name);
-            printf("Employees sorted by name.\n");
-            break;
-        case 4:
-            qsort(emp, n, sizeof(struct employee), compare_by_age);
-            printf("Employees sorted by age.\n");
-            break;
-        case 5:
-            qsort(emp, n, sizeof(struct employee), compare_by_salary);
-            printf("Employees sorted by salary.\n");
-            break;
-        case 6:
-            read_employee_details(emp, n);
-            break;
-        case 7:
-            insert_employee_start(emp, &n);
-            break;
-        case 8:
-            insert_employee_at_position(emp, &n);
-            break;
-        case 9:
-            delete_employee_at_position(emp, &n);
-            break;
-        case 0:
-            printf("Exiting...\n");
-            break;
-        default:
-            printf("Invalid choice. Please try again.\n");
+        int compare_by_age(const void *a, const void *b) {
+            return ((struct Employee *)a)->age - ((struct Employee *)b)->age;
+        }
+
+        int compare_by_salary(const void *a, const void *b) {
+            return (int)(((struct Employee *)a)->salary - ((struct Employee *)b)->salary);
+        }
+        switch (choice) {
+            case 1:
+                print_employee_vector(&empVector);
+                break;
+            case 2:
+                printf("Enter the name of the employee to search: ");
+                scanf("%s", search_name);
+                int position = find_employee_by_name(&empVector, search_name);
+                if (position != -1) {
+                    printf("Employee found at position %d\n", position + 1);
+                } else {
+                    printf("Employee not found\n");
+                }
+                break;
+            case 3:
+                qsort(empVector.data, empVector.size, sizeof(Employee), compare_by_name);
+                printf("Employees sorted by name.\n");
+                break;
+            case 4:
+                qsort(empVector.data, empVector.size, sizeof(Employee), compare_by_age);
+                printf("Employees sorted by age.\n");
+                break;
+            case 5:
+                qsort(empVector.data, empVector.size, sizeof(Employee), compare_by_salary);
+                printf("Employees sorted by salary.\n");
+                break;
+            case 6:
+                read_employee_details(&empVector);
+                break;
+            case 7:
+                insert_employee_start(&empVector);
+                break;
+            case 8:
+                insert_employee_at_position(&empVector);
+                break;
+            case 9:
+                delete_employee_at_position(&empVector);
+                break;
+            case 0:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
         }
     } while (choice != 0);
 
-    free(emp); 
+    free_employee_vector(&empVector);
     return 0;
-}
-
-// Function to insert random data for employees
-void insert_employee(struct employee emp[], int *n)
-{
-    for (int i = 0; i < *n; i++)
-    {
-        sprintf(emp[i].name, "Employee%d", i + 1);
-
-        sprintf(emp[i].gender, (rand() % 2 == 0) ? "Male" : "Female");
-
-        emp[i].age = rand() % 41 + 20;
-
-        emp[i].salary = (float)(rand() % 50001 + 30000);
-
-        emp[i].birthday.day = rand() % 31 + 1;
-        emp[i].birthday.month = rand() % 12 + 1;
-        emp[i].birthday.year = rand() % 21 + 1980; 
-    }
 }
