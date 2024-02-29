@@ -1,5 +1,5 @@
 #include <stdio.h>
-// #include <stdlib.h>
+#include <stdlib.h>
 #include <string.h>
 
 struct date
@@ -16,7 +16,6 @@ struct employee
     struct date birthday;
 };
 
-// show all the employee
 void print_employee(struct employee emp[], int n)
 {
     for (int i = 0; i < n; i++)
@@ -30,7 +29,6 @@ void print_employee(struct employee emp[], int n)
     }
 }
 
-// find a employee by name in structure
 int find_employee_by_name(struct employee emp[], int n, char *name)
 {
     for (int i = 0; i < n; i++)
@@ -43,50 +41,21 @@ int find_employee_by_name(struct employee emp[], int n, char *name)
     return -1;
 }
 
-// sort by name
 int compare_by_name(const void *a, const void *b)
 {
     return strcmp(((struct employee *)a)->name, ((struct employee *)b)->name);
 }
 
-// sort by age
 int compare_by_age(const void *a, const void *b)
 {
     return ((struct employee *)a)->age - ((struct employee *)b)->age;
 }
 
-// sort by salary
 int compare_by_salary(const void *a, const void *b)
 {
     return (int)(((struct employee *)a)->salary - ((struct employee *)b)->salary);
 }
 
-// insert a new employee
-void insert_employee(struct employee emp[], int *n)
-{
-    if (*n < 10)
-    {
-        printf("\nEnter details for the new employee:\n");
-        printf("Name: ");
-        scanf("%s", emp[*n].name);
-        printf("Gender: ");
-        scanf("%s", emp[*n].gender);
-        printf("Age: ");
-        scanf("%d", &emp[*n].age);
-        printf("Salary: ");
-        scanf("%f", &emp[*n].salary);
-        printf("Birthday (day month year): ");
-        scanf("%d %d %d", &emp[*n].birthday.day, &emp[*n].birthday.month, &emp[*n].birthday.year);
-        (*n)++;
-        printf("Employee inserted at the end of the array.\n");
-    }
-    else
-    {
-        printf("Cannot insert more than 10 employees. Array is full.\n");
-    }
-}
-
-// insert a new emloyee at begining of the array
 void insert_employee_start(struct employee emp[], int *n)
 {
     if (*n < 10)
@@ -117,7 +86,6 @@ void insert_employee_start(struct employee emp[], int *n)
     }
 }
 
-// insert a new employee
 void insert_employee_at_position(struct employee emp[], int *n)
 {
     int position;
@@ -159,7 +127,6 @@ void insert_employee_at_position(struct employee emp[], int *n)
     }
 }
 
-// delete a employee at a specific position
 void delete_employee_at_position(struct employee emp[], int *n)
 {
     int position;
@@ -179,6 +146,27 @@ void delete_employee_at_position(struct employee emp[], int *n)
 
     (*n)--;
     printf("Employee deleted from position %d.\n", position);
+}
+
+void read_employee_details(struct employee emp[], int n)
+{
+    int employee_number;
+
+    printf("\nEnter the employee number (1 to %d) to read details: ", n);
+    scanf("%d", &employee_number);
+
+    if (employee_number < 1 || employee_number > n)
+    {
+        printf("Invalid employee number. Please enter a valid number.\n");
+        return;
+    }
+
+    printf("\nDetails for Employee %d:\n", employee_number);
+    printf("Name: %s\n", emp[employee_number - 1].name);
+    printf("Gender: %s\n", emp[employee_number - 1].gender);
+    printf("Age: %d\n", emp[employee_number - 1].age);
+    printf("Salary: %.2f\n", emp[employee_number - 1].salary);
+    printf("Birthday: %d-%d-%d\n", emp[employee_number - 1].birthday.day, emp[employee_number - 1].birthday.month, emp[employee_number - 1].birthday.year);
 }
 
 int main()
@@ -214,11 +202,10 @@ int main()
         printf("3. Sort employees by name\n");
         printf("4. Sort employees by age\n");
         printf("5. Sort employees by salary\n");
-        // printf("6. Insert a new employee at the end\n");
+        printf("6. Read details about an employee\n");
         printf("7. Insert a new employee at the beginning\n");
         printf("8. Insert a new employee at a specific position\n");
         printf("9. Delete an employee at a specific position\n");
-        // printf("10. Free memory for the array\n");
         printf("0. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -254,6 +241,8 @@ int main()
             printf("Employees sorted by salary.\n");
             break;
         case 6:
+            read_employee_details(emp, n);
+            break;
         case 7:
             insert_employee_start(emp, &n);
             break;
@@ -263,7 +252,6 @@ int main()
         case 9:
             delete_employee_at_position(emp, &n);
             break;
-        case 10:
         case 0:
             printf("Exiting...\n");
             break;
