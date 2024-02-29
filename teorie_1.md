@@ -40,5 +40,5 @@ Se așteaptă un program care are meniu poate importa orice fișier de tip .csv 
 
 ## Notă
 
-1. Aplicația să fie capabilă să exporte rezultatele într-un raport textul
+1. Aplicația să fie capabilă să exporte rezultatele într-un raport textual
 2. Aplicația permite generarea de grafice pe baza datelor calculate (librăria raylib)
