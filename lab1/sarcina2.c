@@ -16,6 +16,17 @@ struct employee
     struct date birthday;
 };
 
+void print_employee(struct employee emp[], int n);
+int find_employee_by_name(struct employee emp[], int n, char *name);
+int compare_by_name(const void *a, const void *b);
+int compare_by_age(const void *a, const void *b);
+int compare_by_salary(const void *a, const void *b);
+void insert_employee_start(struct employee emp[], int *n);
+void insert_employee_at_position(struct employee emp[], int *n);
+void delete_employee_at_position(struct employee emp[], int *n);
+void read_employee_details(struct employee emp[], int n);
+void insert_employee(struct employee emp[], int *n);
+
 void print_employee(struct employee emp[], int n)
 {
     for (int i = 0; i < n; i++)
@@ -172,27 +183,15 @@ void read_employee_details(struct employee emp[], int n)
 int main()
 {
     struct employee *emp;
-    int i, n, choice;
+    int n, choice;
     char search_name[30];
     printf("Enter the number of employees: ");
     scanf("%d", &n);
 
     emp = (struct employee *)malloc(n * sizeof(struct employee));
 
-    for (i = 0; i < n; i++)
-    {
-        printf("\nEnter details for employee %d:\n", i + 1);
-        printf("Name: ");
-        scanf("%s", emp[i].name);
-        printf("Gender: ");
-        scanf("%s", emp[i].gender);
-        printf("Age: ");
-        scanf("%d", &emp[i].age);
-        printf("Salary: ");
-        scanf("%f", &emp[i].salary);
-        printf("Birthday (day month year): ");
-        scanf("%d %d %d", &emp[i].birthday.day, &emp[i].birthday.month, &emp[i].birthday.year);
-    }
+    // Generate random data for employees
+    insert_employee(emp, &n);
 
     do
     {
@@ -260,5 +259,25 @@ int main()
         }
     } while (choice != 0);
 
+    free(emp); 
     return 0;
+}
+
+// Function to insert random data for employees
+void insert_employee(struct employee emp[], int *n)
+{
+    for (int i = 0; i < *n; i++)
+    {
+        sprintf(emp[i].name, "Employee%d", i + 1);
+
+        sprintf(emp[i].gender, (rand() % 2 == 0) ? "Male" : "Female");
+
+        emp[i].age = rand() % 41 + 20;
+
+        emp[i].salary = (float)(rand() % 50001 + 30000);
+
+        emp[i].birthday.day = rand() % 31 + 1;
+        emp[i].birthday.month = rand() % 12 + 1;
+        emp[i].birthday.year = rand() % 21 + 1980; 
+    }
 }
