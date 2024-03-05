@@ -243,7 +243,7 @@ int main() {
         printf("0. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
-        // Implementation of compare functions
+
         int compare_by_name(const void *a, const void *b) {
             return strcmp(((struct Employee *)a)->name, ((struct Employee *)b)->name);
         }
