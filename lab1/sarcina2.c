@@ -255,6 +255,7 @@ int main() {
         int compare_by_salary(const void *a, const void *b) {
             return (int)(((struct Employee *)a)->salary - ((struct Employee *)b)->salary);
         }
+        
         switch (choice) {
             case 1:
                 print_employee_vector(&empVector);
