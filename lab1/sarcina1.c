@@ -1,27 +1,47 @@
-#include<stdio.h>
-#include<string.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
-struct date
+typedef struct Date
 {
-    int day, month, year;   
+    int day, month, year;
 };
 
-struct employee
+typedef struct Employee
 {
     char name[30];
     char gender[10];
     int age;
     float salary;
-    struct date birthday;
-};
+    struct Date birthday;
+} Employee;
 
-void print_employee(struct employee emp[], int n)
+void generate_random_data(struct Employee *emp);
+void print_employee(struct Employee emp[], int n);
+int find_employee_by_name(struct Employee emp[], int n, char *name);
+
+void generate_random_data(struct Employee *emp)
+{
+    char names[][30] = {"Dan", "Stas", "Natasa", "Mihai", "Octavian", "Grigore", "Nastea", "Vlad", "Valerian", "Patricia"};
+    char genders[][10] = {"Male", "Female"};
+
+    strcpy(emp->name, names[rand() % 10]);
+    strcpy(emp->gender, genders[rand() % 2]);
+    emp->age = rand() % 40 + 20;               
+    emp->salary = (rand() % 5000 + 50000) / 100.0; 
+    emp->birthday.day = rand() % 28 + 1;    
+    emp->birthday.month = rand() % 12 + 1;      
+    emp->birthday.year = rand() % 10 + 1990;    
+}
+
+void print_employee(struct Employee emp[], int n)
 {
     int i;
-    for(i = 0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
         printf("\n");
-        printf("Employee %d:\n", i+1);
+        printf("Employee %d:\n", i + 1);
         printf("Name: %s\n", emp[i].name);
         printf("Gender: %s\n", emp[i].gender);
         printf("Age: %d\n", emp[i].age);
@@ -31,12 +51,12 @@ void print_employee(struct employee emp[], int n)
     }
 }
 
-int find_employee_by_name(struct employee emp[], int n, char* name)
+int find_employee_by_name(struct Employee emp[], int n, char *name)
 {
     int i;
-    for(i = 0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
-        if(strcmp(emp[i].name, name) == 0)
+        if (strcmp(emp[i].name, name) == 0)
         {
             return i;
         }
@@ -46,7 +66,9 @@ int find_employee_by_name(struct employee emp[], int n, char* name)
 
 int main(int argc, char const *argv[])
 {
-    struct employee emp[10];
+    srand(time(NULL));
+
+    struct Employee emp[10];
     int i, n;
     char search_name[30];
     int position;
@@ -54,19 +76,9 @@ int main(int argc, char const *argv[])
     printf("Enter the number of employees: ");
     scanf("%d", &n);
 
-    for(i = 0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
-        printf("Enter name: ");
-        scanf("%s", emp[i].name);
-        printf("Enter gender: ");
-        scanf("%s", emp[i].gender);
-        printf("Enter age: ");
-        scanf("%d", &emp[i].age);
-        printf("Enter salary: ");
-        scanf("%f", &emp[i].salary);
-        printf("Enter birthday (day month year): ");
-        scanf("%d %d %d", &emp[i].birthday.day, &emp[i].birthday.month, &emp[i].birthday.year);
-        printf("\n");
+        generate_random_data(&emp[i]);
     }
 
     printf("\n");
@@ -78,14 +90,13 @@ int main(int argc, char const *argv[])
 
     position = find_employee_by_name(emp, n, search_name);
 
-    if(position != -1)
+    if (position != -1)
     {
-        printf("Employee found at position %d\n", position+1);
+        printf("Employee found at position %d\n", position + 1);
     }
     else
     {
         printf("Employee not found\n");
-        position = find_employee_by_name(emp, n, search_name);
     }
 
     return 0;
