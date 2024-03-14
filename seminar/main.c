@@ -306,10 +306,10 @@ void calculateMonthlySalesTrends(SubcategoryMonthlySales *subcategorySales, int 
         printf("\nSubcategory: %s\n", subcategorySales[i].product_subcategory);
         printf("Month\tRevenue\tTrend\n");
 
-        for (int j = 1; j < 12; j++)
+        for (int j = 0; j < 12; j++)
         {
             float trend = (subcategorySales[i].monthlyRevenue[j] - subcategorySales[i].monthlyRevenue[j - 1]) / subcategorySales[i].monthlyRevenue[j - 1] * 100.0f;
-            printf("%d\t%.2f\t%.2f%%\n", j + 1, subcategorySales[i].monthlyRevenue[j], trend);
+            printf("%d\t%.2f\t%.2f%%\n", j+1 , subcategorySales[i].monthlyRevenue[j], trend);
         }
     }
 }
