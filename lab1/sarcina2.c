@@ -119,32 +119,24 @@ int find_employee_by_name(EmployeeVector *vec, char *name) {
 
 void insert_employee_start(EmployeeVector *vec) {
     Employee newEmployee;
-    printf("\nEnter details for the new employee:\n");
-    printf("Name: ");
-    scanf("%s", newEmployee.name);
-    printf("Gender: ");
-    scanf("%s", newEmployee.gender);
-    printf("Age: ");
-    scanf("%d", &newEmployee.age);
-    printf("Salary: ");
-    scanf("%f", &newEmployee.salary);
-    printf("Birthday (day month year): ");
-    scanf("%d %d %d", &newEmployee.birthday.day, &newEmployee.birthday.month, &newEmployee.birthday.year);
+
+    sprintf(newEmployee.name, "Employee%d", vec->size + 1);  // Generate a unique name
+    sprintf(newEmployee.gender, (rand() % 2 == 0) ? "Male" : "Female");
+    newEmployee.age = rand() % 41 + 20;
+    newEmployee.salary = (float)(rand() % 50001 + 30000);
+    newEmployee.birthday.day = rand() % 31 + 1;
+    newEmployee.birthday.month = rand() % 12 + 1;
+    newEmployee.birthday.year = rand() % 21 + 1980;
 
     push_front(vec, newEmployee);
-    printf("Employee inserted at the beginning of the array.\n");
+
 }
 
 void insert_employee_at_position(EmployeeVector *vec) {
     int position;
 
-    printf("\nEnter the position (1 to %lu) to insert the new employee: ", vec->size + 1);
+    printf("\nEnter the position to %lu to insert the new employee: ", vec->size + 1);
     scanf("%d", &position);
-
-    if (position < 1 || position > vec->size + 1) {
-        printf("Invalid position. Please enter a valid position.\n");
-        return;
-    }
 
     Employee newEmployee;
     printf("\nEnter details for the new employee:\n");
@@ -169,11 +161,6 @@ void delete_employee_at_position(EmployeeVector *vec) {
     printf("\nEnter the position (1 to %lu) to delete the employee: ", vec->size);
     scanf("%d", &position);
 
-    if (position < 1 || position > vec->size) {
-        printf("Invalid position. Please enter a valid position.\n");
-        return;
-    }
-
     for (size_t i = position - 1; i < vec->size - 1; i++) {
         vec->data[i] = vec->data[i + 1];
     }
@@ -182,16 +169,13 @@ void delete_employee_at_position(EmployeeVector *vec) {
     printf("Employee deleted from position %d.\n", position);
 }
 
-void read_employee_details(EmployeeVector *vec) {
+void read_employee_details( EmployeeVector *vec) {
     size_t employee_number;
+    
 
-    printf("\nEnter the employee number (1 to %lu) to read details: ", vec->size);
+
+    printf("\nEnter the employee number to %lu to read details: ", vec->size);
     scanf("%lu", &employee_number);
-
-    if (employee_number < 1 || employee_number > vec->size) {
-        printf("Invalid employee number. Please enter a valid number.\n");
-        return;
-    }
 
     printf("\nDetails for Employee %lu:\n", employee_number);
     printf("Name: %s\n", vec->data[employee_number - 1].name);
@@ -295,10 +279,10 @@ int main() {
                 delete_employee_at_position(&empVector);
                 break;
             case 0:
-                printf("Exiting...\n");
+                printf(".....\n");
                 break;
             default:
-                printf("Invalid choice. Please try again.\n");
+                printf("Invalid choice.\n");
         }
     } while (choice != 0);
 
