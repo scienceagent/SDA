@@ -23,7 +23,7 @@ int find_employee_by_name(struct Employee emp[], int n, char *name);
 
 void generate_random_data(struct Employee *emp)
 {
-    char names[][30] = {"Dan", "Stas", "Natasa", "Mihai", "Octavian", "Grigore", "Nastea", "Vlad", "Valerian", "Patricia"};
+    char names[][30] = {"Dan", "Stas", "Natasha", "Misha", "Octavian", "Grigore", "Nastea", "Vlad", "Valerian", "Patricia"};
     char genders[][10] = {"Male", "Female"};
 
     strcpy(emp->name, names[rand() % 10]);
