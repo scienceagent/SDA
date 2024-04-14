@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Define the Document structure
 typedef struct Document
 {
     int id;
@@ -12,7 +11,6 @@ typedef struct Document
     struct Document *next;
 } Document;
 
-// Define the Printer structure
 typedef struct Printer
 {
     int id;
@@ -21,7 +19,6 @@ typedef struct Printer
     struct Printer *next;
 } Printer;
 
-// Function prototypes
 Document *createDocument(int id, char name[], int totalLines);
 Document *enqueueDocument(Document *head, Document *newDocument);
 void printQueue(Document *head);
@@ -38,10 +35,8 @@ int main()
     printf("Enter the number of printers available: ");
     scanf("%d", &numPrinters);
 
-    // Initialize empty print queue (head pointer)
     Document *head = NULL;
 
-    // Initialize empty printer list (head pointer)
     Printer *headPrinter = NULL;
     initializePrinters(&headPrinter, numPrinters);
 
@@ -52,7 +47,7 @@ int main()
         printf("1. Add a document\n");
         printf("2. Assign document to printer (for demo)\n");
         printf("3. Display print queue\n");
-        printf("4. Simulate printing (for demo)\n"); // Add option for simulation
+        printf("4. Simulate printing\n"); 
         printf("5. Show Print Queue and Printer Status\n");
         printf("6. Exit\n");
         printf("Enter your choice: ");
@@ -74,7 +69,7 @@ int main()
             Document *newDocument = createDocument(id, name, totalLines);
             if (newDocument == NULL)
             {
-                break; // Error creating document, handled inside createDocument
+                break; 
             }
 
             head = enqueueDocument(head, newDocument);
@@ -90,10 +85,10 @@ int main()
             else
             {
                 Document *nextDocument = head;
-                head = head->next; // Remove document from queue (for demo)
+                head = head->next; 
                 assignDocumentToPrinter(headPrinter, nextDocument);
                 printf("Assigned document '%s' (ID: %d) for printing.\n", nextDocument->name, nextDocument->id);
-                free(nextDocument); // Free the dequeued document
+                free(nextDocument); 
             }
             break;
         }
@@ -104,7 +99,7 @@ int main()
                 int timeStep;
                 printf("Enter simulation time step (seconds): ");
                 scanf("%d", &timeStep);
-                simulatePrinting(headPrinter, timeStep); // Implement simulatePrinting function
+                simulatePrinting(headPrinter, timeStep); 
                 printf("Simulation completed.\n"); }
                 break;
         case 5:
@@ -115,7 +110,7 @@ int main()
             break;
         }
     } while (choice != 4);
-    // Free remaining documents in the queue
+   
     while (head != NULL)
     {
         Document *temp = head;
@@ -142,11 +137,12 @@ Document *createDocument(int id, char name[], int totalLines)
     newDocument->next = NULL;
     return newDocument;
 }
+
 Document *enqueueDocument(Document *head, Document *newDocument)
 {
     if (head == NULL)
     {
-        return newDocument; // Queue was empty, new document becomes head
+        return newDocument;
     }
 
     Document *current = head;
@@ -157,18 +153,15 @@ Document *enqueueDocument(Document *head, Document *newDocument)
     current->next = newDocument;
     return head;
 }
+
 void simulatePrinting(Printer* headPrinter, int timeStep) {
-    // Iterate through the time steps
     for (int i = 0; i < timeStep; i++) {
-        // Process each printer
         Printer* currentPrinter = headPrinter;
         while (currentPrinter != NULL) {
             if (currentPrinter->currentDocument != NULL) {
-                // Simulate printing progress based on print speed and time step
                 int linesPrinted = currentPrinter->printSpeed * timeStep;
                 currentPrinter->currentDocument->linesLeft -= linesPrinted;
                 
-                // Check if document is finished printing
                 if (currentPrinter->currentDocument->linesLeft <= 0) {
                     printf("Document %d finished printing.\n", currentPrinter->currentDocument->id);
                     currentPrinter->currentDocument = NULL; // Free printer
@@ -254,8 +247,6 @@ void initializePrinters(Printer **headPrinter, int numPrinters)
 
 void assignDocumentToPrinter(Printer *headPrinter, Document *document)
 {
-    // This is a simplified assignment for demonstration purposes.
-    // You can implement a more sophisticated algorithm in the future.
 
     if (headPrinter == NULL)
     {
