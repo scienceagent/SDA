@@ -1,37 +1,96 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <time.h>
+#include <stdlib.h>
 
-#define NUMBER 1000001
+// Array management functions
+int *create_random_array(int length);
+void display_array(const int *array, int length);
+void release_array(int *array);
+int *duplicate_array(const int *array, int length);
 
-int size;
-int array1[NUMBER];
-int array2[NUMBER];
-int merge_sort_result[NUMBER];
+// Simple sorting algorithms
+void sort_selection(int *array, int length);
+void sort_insertion(int *array, int length);
+void sort_bubble(int *array, int length);
 
-int sum_result[1001];
-int array_a[1001];
-int array_b[1001];
+// Advanced sorting algorithms
+void sort_merge(int *array, int left, int right);
+void sort_quick(int *array, int low, int high);
+void sort_heap(int *array, int length);
 
-void add_arrays(int array_a[1001], int array_b[1001]) {
-    int carry = 0;
-    bool done = false;
-    for (int i = 1000; i > 1; i--) {
-        sum_result[i] = (array_a[i] + array_b[i] + carry) % 10;
-        carry = (array_a[i] + array_b[i] + carry) / 10;
-        if (sum_result[i] == 0 && array_a[i-1] == 0 && array_b[i-1] == 0 && carry == 0)
-            break;
-    }
-    for (int i = 1; i <= 1000; i++)
-        array_a[i] = array_b[i];
-    for (int i = 1; i <= 1000; i++)
-        array_b[i] = sum_result[i];
+// Benchmark menu
+void benchmark_menu();
+
+int main() {
+    srand((unsigned int)time(0));
+    benchmark_menu();
+    return 0;
 }
 
-void bubble_sort(int *array, int size) {
-    for (int i = 0; i < size - 1; i++) {
-        for (int j = 0; j < size - i - 1; j++) {
+int *create_random_array(int length) {
+    int *array = (int *)malloc(length * sizeof(int));
+    if (!array) {
+        perror("Memory allocation failed");
+        return NULL;
+    }
+    for (int i = 0; i < length; i++) {
+        array[i] = rand() % 100;
+    }
+    return array;
+}
+
+void display_array(const int *array, int length) {
+    for (int i = 0; i < length; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+}
+
+void release_array(int *array) {
+    free(array);
+}
+
+int *duplicate_array(const int *array, int length) {
+    int *copy = (int *)malloc(length * sizeof(int));
+    if (!copy) {
+        perror("Memory allocation failed");
+        return NULL;
+    }
+    for (int i = 0; i < length; i++) {
+        copy[i] = array[i];
+    }
+    return copy;
+}
+
+void sort_selection(int *array, int length) {
+    for (int i = 0; i < length - 1; i++) {
+        int min_index = i;
+        for (int j = i + 1; j < length; j++) {
+            if (array[j] < array[min_index]) {
+                min_index = j;
+            }
+        }
+        int temp = array[min_index];
+        array[min_index] = array[i];
+        array[i] = temp;
+    }
+}
+
+void sort_insertion(int *array, int length) {
+    for (int i = 1; i < length; i++) {
+        int key = array[i];
+        int j = i - 1;
+        while (j >= 0 && array[j] > key) {
+            array[j + 1] = array[j];
+            j--;
+        }
+        array[j + 1] = key;
+    }
+}
+
+void sort_bubble(int *array, int length) {
+    for (int i = 0; i < length - 1; i++) {
+        for (int j = 0; j < length - i - 1; j++) {
             if (array[j] > array[j + 1]) {
                 int temp = array[j];
                 array[j] = array[j + 1];
@@ -41,177 +100,187 @@ void bubble_sort(int *array, int size) {
     }
 }
 
-void selection_sort(int *array, int size) {
-    for (int i = 0; i < size - 1; i++) {
-        int min_index = i;
-        for (int j = i + 1; j < size; j++)
-            if (array[j] < array[min_index])
-                min_index = j;
-        int temp = array[min_index];
-        array[min_index] = array[i];
+void merge(int *array, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    int L[n1], R[n2];
+
+    for (int i = 0; i < n1; i++) {
+        L[i] = array[left + i];
+    }
+    for (int j = 0; j < n2; j++) {
+        R[j] = array[mid + 1 + j];
+    }
+
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            array[k] = L[i];
+            i++;
+        } else {
+            array[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        array[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        array[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void sort_merge(int *array, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        sort_merge(array, left, mid);
+        sort_merge(array, mid + 1, right);
+        merge(array, left, mid, right);
+    }
+}
+
+int partition(int *array, int low, int high) {
+    int pivot = array[high];
+    int i = low - 1;
+    for (int j = low; j <= high - 1; j++) {
+        if (array[j] <= pivot) {
+            i++;
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+    int temp = array[i + 1];
+    array[i + 1] = array[high];
+    array[high] = temp;
+    return i + 1;
+}
+
+void sort_quick(int *array, int low, int high) {
+    if (low < high) {
+        int pi = partition(array, low, high);
+        sort_quick(array, low, pi - 1);
+        sort_quick(array, pi + 1, high);
+    }
+}
+
+void heapify(int *array, int length, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < length && array[left] > array[largest])
+        largest = left;
+
+    if (right < length && array[right] > array[largest])
+        largest = right;
+
+    if (largest != i) {
+        int swap = array[i];
+        array[i] = array[largest];
+        array[largest] = swap;
+        heapify(array, length, largest);
+    }
+}
+
+void sort_heap(int *array, int length) {
+    for (int i = length / 2 - 1; i >= 0; i--)
+        heapify(array, length, i);
+
+    for (int i = length - 1; i >= 0; i--) {
+        int temp = array[0];
+        array[0] = array[i];
         array[i] = temp;
+        heapify(array, i, 0);
     }
 }
 
-void merge_sort(int *array, int left, int right, int *result) {
-    if (left >= right)
+void benchmark_menu() {
+    int length;
+    printf("Enter the size of the array: ");
+    scanf("%d", &length);
+
+    int *array = create_random_array(length);
+    if (!array) {
         return;
-
-    int mid = (left + right) / 2;
-
-    merge_sort(array, left, mid, result);
-    merge_sort(array, mid + 1, right, result);
-
-    int left_index = left;
-    int right_index = mid + 1;
-    int index = 0;
-    while (left_index <= mid && right_index <= right) {
-        if (array[left_index] <= array[right_index])
-            result[index++] = array[left_index++];
-        else
-            result[index++] = array[right_index++];
-    }
-    while (left_index <= mid)
-        result[index++] = array[left_index++];
-
-    while (right_index <= right)
-        result[index++] = array[right_index++];
-
-    for (int i = left; i <= right; i++)
-        array[i] = result[i - left];
-}
-
-void linear_search(int *array, int size, int target) {
-    for (int i = 0; i < size; i++)
-        if (target == array[i]) {
-            printf("The number was found\n");
-            return;
-        }
-    printf("No such number in the randomly chosen array\n");
-}
-
-void binary_search(int *array, int left, int right, int target) {
-    while (left <= right) {
-        int mid = (left + right) / 2;
-
-        if (array[mid] == target) {
-            printf("The number was found\n");
-            return;
-        }
-
-        if (array[mid] < target)
-            left = mid + 1;
-        else
-            right = mid - 1;
     }
 
-    printf("No such number in the randomly chosen array\n");
-}
+    printf("Generated array:\n");
+    display_array(array, length);
 
-void initialize_array(int **array, int size) {
-    srand(time(NULL));
-    *array = (int *)malloc(size * sizeof(int));
-    for (int i = 0; i < size; i++) {
-        (*array)[i] = rand() % 100;
-    }
-}
+    while (1) {
+        printf("\n1. Selection Sort\n");
+        printf("2. Insertion Sort\n");
+        printf("3. Bubble Sort\n");
+        printf("4. Merge Sort\n");
+        printf("5. Quick Sort\n");
+        printf("6. Heap Sort\n");
+        printf("7. Exit\n");
+        printf("Choose a sorting algorithm: ");
 
-void display_array(int *array, int size) {
-    for (int i = 0; i < size; i++) {
-        printf("%d ", array[i]);
-    }
-    printf("\n");
-}
-
-void free_array(int **array) {
-    free(*array);
-    *array = NULL;
-}
-
-void menu() {
-    int *dynamic_array = NULL;
-    int choice;
-    clock_t start_time, end_time;
-    double execution_time;
-
-    do {
-        printf("Menu:\n");
-        printf("1. Initialize array with random numbers\n");
-        printf("2. Display array\n");
-        printf("3. Free array memory\n");
-        printf("4. Sort array using Bubble Sort\n");
-        printf("5. Sort array using Merge Sort\n");
-        printf("0. Exit\n");
-        printf("Enter your choice: ");
+        int choice;
         scanf("%d", &choice);
+
+        clock_t start, end;
+        double elapsed_time;
+
+        int *copy = duplicate_array(array, length);
+        if (!copy) {
+            printf("Memory allocation failed for array copy\n");
+            continue;
+        }
 
         switch (choice) {
             case 1:
-                if (dynamic_array != NULL) {
-                    printf("Array is already initialized. Free the memory first.\n");
-                    break;
-                }
-                printf("Enter the size of the array: ");
-                scanf("%d", &size);
-                initialize_array(&dynamic_array, size);
-                printf("Array initialized.\n");
+                start = clock();
+                sort_selection(copy, length);
+                end = clock();
                 break;
-
             case 2:
-                if (dynamic_array == NULL) {
-                    printf("Array not initialized.\n");
-                    break;
-                }
-                display_array(dynamic_array, size);
+                start = clock();
+                sort_insertion(copy, length);
+                end = clock();
                 break;
-
             case 3:
-                if (dynamic_array == NULL) {
-                    printf("Array not initialized.\n");
-                    break;
-                }
-                free_array(&dynamic_array);
-                printf("Array memory freed.\n");
+                start = clock();
+                sort_bubble(copy, length);
+                end = clock();
                 break;
-
             case 4:
-                if (dynamic_array == NULL) {
-                    printf("Array not initialized.\n");
-                    break;
-                }
-                start_time = clock();
-                bubble_sort(dynamic_array, size);
-                end_time = clock();
-                execution_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-                printf("Array sorted using Bubble Sort in %f seconds.\n", execution_time);
+                start = clock();
+                sort_merge(copy, 0, length - 1);
+                end = clock();
                 break;
-
             case 5:
-                if (dynamic_array == NULL) {
-                    printf("Array not initialized.\n");
-                    break;
-                }
-                start_time = clock();
-                merge_sort(dynamic_array, 0, size - 1, merge_sort_result);
-                end_time = clock();
-                execution_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-                printf("Array sorted using Merge Sort in %f seconds.\n", execution_time);
+                start = clock();
+                sort_quick(copy, 0, length - 1);
+                end = clock();
                 break;
-
-            case 0:
-                if (dynamic_array != NULL) {
-                    free_array(&dynamic_array);
-                }
-                printf("Exiting program.\n");
+            case 6:
+                start = clock();
+                sort_heap(copy, length);
+                end = clock();
                 break;
-
+            case 7:
+                release_array(array);
+                return;
             default:
-                printf("Invalid choice. Please try again.\n");
+                printf("Invalid choice\n");
+                continue;
         }
-    } while (choice != 0);
-}
 
-int main() {
-    menu();
-    return 0;
+        elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("Sorted array:\n");
+        display_array(copy, length);
+        printf("Time taken: %f seconds\n", elapsed_time);
+
+        release_array(copy);
+    }
 }
